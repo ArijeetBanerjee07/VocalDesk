@@ -3,17 +3,759 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VocalDesk</title>
+    <meta name="description" content="VocalDesk - Voice-controlled desktop assistant for hands-free application control">
+    <title>VocalDesk - Voice-Controlled Desktop Assistant</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>VocalDesk</h1>
-        <p>Say a command like <b>"Open Calculator"</b> or <b>"Open Notepad"</b> or any file.</p>
-        <button id="startBtn">Start Listening</button>
-        <p><b>Heard: </b><span id="commandText">...</span></p>
-        <p><b>Status: </b><span id="status">Waiting...</span></p>
-    </div>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="logo">
+            <span class="logo-text">VocalDesk</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-section="home">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20H10Z" fill="currentColor"/>
+                </svg>
+                <span class="nav-text">Home</span>
+            </li>
+            <li class="nav-item" data-section="commands">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 3L5 7L9 11V8H16V14H19V8C19 5.79 17.21 4 15 4H9V3ZM16 13V16H9V10H6V16C6 18.21 7.79 20 10 20H16V23L20 19L16 15V13Z" fill="currentColor"/>
+                </svg>
+                <span class="nav-text">Commands</span>
+            </li>
+            <li class="nav-item" data-section="history">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 3C8.03 3 4 7.03 4 12H1L4.89 15.89L4.96 16.03L9 12H6C6 8.13 9.13 5 13 5C16.87 5 20 8.13 20 12C20 15.87 16.87 19 13 19C11.07 19 9.32 18.21 8.06 16.94L6.64 18.36C8.27 19.99 10.51 21 13 21C17.97 21 22 16.97 22 12C22 7.03 17.97 3 13 3ZM12 8V13L16.28 15.54L17 14.33L13.5 12.25V8H12Z" fill="currentColor"/>
+                </svg>
+                <span class="nav-text">History</span>
+            </li>
+            <li class="nav-item learn-nav" data-section="shortcuts">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5H4C2.9 5 2 5.9 2 7V17C2 18.1 2.9 19 4 19H20C21.1 19 22 18.1 22 17V7C22 5.9 21.1 5 20 5ZM11 8H13V10H11V8ZM11 11H13V13H11V11ZM8 8H10V10H8V8ZM8 11H10V13H8V11ZM7 13H5V11H7V13ZM7 10H5V8H7V10ZM16 17H8V15H16V17ZM16 13H14V11H16V13ZM16 10H14V8H16V10ZM19 13H17V11H19V13ZM19 10H17V8H19V10Z" fill="currentColor"/>
+                </svg>
+                <span class="nav-text">Learn</span>
+                <span class="learn-badge">New</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="theme-toggle">
+                <svg class="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3ZM12 19C8.13 19 5 15.87 5 12C5 8.13 8.13 5 12 5C15.87 5 19 8.13 19 12C19 15.87 15.87 19 12 19ZM12 7C9.24 7 7 9.24 7 12C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12C17 9.24 14.76 7 12 7Z" fill="currentColor"/>
+                </svg>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section class="content-section active" id="home">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="gradient-text">Voice Control</span>
+                        <span class="hero-subtitle">Your Desktop</span>
+                    </h1>
+                    <p class="hero-description">Control applications hands-free with powerful voice commands</p>
+                    
+                    <!-- Sound Wave Animation -->
+                    <div class="sound-wave" id="soundWave">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+
+                    <button id="startBtn" class="main-action-btn">
+                        <span class="btn-icon">🎙️</span>
+                        <span class="btn-text">Start Listening</span>
+                    </button>
+                    <p class="keyboard-hint">Press <kbd>Space</kbd> to start</p>
+                </div>
+
+                <div class="status-panel">
+                    <div class="status-item">
+                        <span class="status-label">Command</span>
+                        <span class="status-value" id="commandText">Waiting for input...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Status</span>
+                        <span class="status-value status-indicator" id="status">Ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-value" id="totalCommands">0</span>
+                    <span class="stat-label">Commands</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-value">4</span>
+                    <span class="stat-label">Apps Available</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">⌨️</span>
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Shortcuts</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Commands Section -->
+        <section class="content-section" id="commands">
+            <div class="section-header">
+                <h2 class="section-title">Available Commands</h2>
+                <p class="section-subtitle">Click any command to try it with voice</p>
+            </div>
+            
+            <div class="commands-grid">
+                <div class="command-card-modern" data-command="calculator">
+                    <div class="command-icon-large">🧮</div>
+                    <h3 class="command-title">Calculator</h3>
+                    <p class="command-description">Open Windows Calculator</p>
+                    <div class="command-example">"Open Calculator"</div>
+                </div>
+                <div class="command-card-modern" data-command="chrome">
+                    <div class="command-icon-large">🌐</div>
+                    <h3 class="command-title">Chrome</h3>
+                    <p class="command-description">Launch Google Chrome</p>
+                    <div class="command-example">"Open Chrome"</div>
+                </div>
+                <div class="command-card-modern" data-command="vscode">
+                    <div class="command-icon-large">💻</div>
+                    <h3 class="command-title">VS Code</h3>
+                    <p class="command-description">Open Visual Studio Code</p>
+                    <div class="command-example">"Open VS Code"</div>
+                </div>
+                <div class="command-card-modern" data-command="notepad">
+                    <div class="command-icon-large">📝</div>
+                    <h3 class="command-title">Notepad</h3>
+                    <p class="command-description">Launch Notepad</p>
+                    <div class="command-example">"Open Notepad"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section class="content-section" id="history">
+            <div class="section-header">
+                <h2 class="section-title">Command History</h2>
+                <button id="clearHistory" class="clear-btn-modern">
+                    <span>🗑️</span> Clear All
+                </button>
+            </div>
+            
+            <div id="historyList" class="history-grid">
+                <div class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>No commands yet</p>
+                    <span class="empty-hint">Start speaking to see your history</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Shortcuts Section -->
+        <section class="content-section" id="shortcuts">
+            <div class="section-header">
+                <h2 class="section-title">Learn Keyboard Shortcuts</h2>
+                <button id="practiceBtn" class="practice-btn-modern">
+                    <span>🎮</span> Practice Mode
+                </button>
+            </div>
+            
+            <p class="practice-status" id="practiceStatus">Press any shortcut key to see it in action!</p>
+
+            <!-- Tabs for different categories -->
+            <div class="shortcuts-tabs">
+                <button class="tab-btn active" data-category="app">
+                    <span>🎤</span> VocalDesk
+                </button>
+                <button class="tab-btn" data-category="general">
+                    <span>⚡</span> General
+                </button>
+                <button class="tab-btn" data-category="text">
+                    <span>📝</span> Text Editing
+                </button>
+                <button class="tab-btn" data-category="browser">
+                    <span>🌐</span> Browser
+                </button>
+                <button class="tab-btn" data-category="windows">
+                    <span>🪟</span> Windows
+                </button>
+            </div>
+
+            <!-- VocalDesk Shortcuts -->
+            <div class="shortcuts-category active" data-category="app">
+                <h3 class="category-title">VocalDesk Shortcuts</h3>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-card" data-key="Space">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Start Listening</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual" data-key="Space">Space</div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Activate microphone to listen for voice commands</p>
+                    </div>
+
+                    <div class="shortcut-card" data-key="Escape">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Stop Listening</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual" data-key="Escape">Esc</div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Cancel voice recognition immediately</p>
+                    </div>
+
+                    <div class="shortcut-card" data-key="KeyH">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">View History</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual" data-key="KeyH">H</div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Navigate to command history panel</p>
+                    </div>
+
+                    <div class="shortcut-card" data-key="KeyC">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Clear History</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo" data-key="KeyC">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">C</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Remove all command history entries</p>
+                    </div>
+
+                    <div class="shortcut-card" data-key="Slash">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Show Help</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual" data-key="Slash">?</div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Display keyboard shortcuts guide</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- General Shortcuts -->
+            <div class="shortcuts-category" data-category="general">
+                <h3 class="category-title">General Shortcuts</h3>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-card" data-keys="ctrl-c">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Copy</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">C</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Copy selected text or items to clipboard</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-v">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Paste</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">V</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Paste content from clipboard</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-x">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Cut</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">X</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Cut selected text or items to clipboard</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-z">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Undo</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">Z</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Undo the last action</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-y">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Redo</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">Y</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Redo the previously undone action</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-a">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Select All</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">A</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Select all content in current context</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-s">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Save</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">S</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Save current document or file</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-p">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Print</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">P</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Open print dialog</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-f">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Find</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">F</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Open find/search dialog</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Editing Shortcuts -->
+            <div class="shortcuts-category" data-category="text">
+                <h3 class="category-title">Text Editing Shortcuts</h3>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-card" data-keys="ctrl-b">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Bold</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">B</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Make selected text bold</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-i">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Italic</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">I</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Make selected text italic</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-u">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Underline</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">U</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Underline selected text</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-left">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Jump Word Left</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">←</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Move cursor one word to the left</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-right">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Jump Word Right</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">→</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Move cursor one word to the right</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="home">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Line Start</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual">Home</div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Move cursor to beginning of line</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="end">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Line End</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual">End</div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Move cursor to end of line</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-backspace">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Delete Word</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">⌫</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Delete entire word to the left</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser Shortcuts -->
+            <div class="shortcuts-category" data-category="browser">
+                <h3 class="category-title">Browser Shortcuts</h3>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-card" data-keys="ctrl-t">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">New Tab</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">T</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Open a new browser tab</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-w">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Close Tab</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">W</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Close current browser tab</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-shift-t">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Reopen Tab</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">Shift</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">T</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Reopen last closed tab</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-tab">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Next Tab</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">Tab</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Switch to next tab</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-r">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Refresh Page</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">R</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Reload current page</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-plus">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Zoom In</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">+</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Increase page zoom level</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="ctrl-minus">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Zoom Out</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Ctrl</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Decrease page zoom level</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="f5">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Refresh</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual">F5</div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Reload current page</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Windows Shortcuts -->
+            <div class="shortcuts-category" data-category="windows">
+                <h3 class="category-title">Windows Shortcuts</h3>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-card" data-keys="win-d">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Show Desktop</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Win</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">D</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Minimize all windows and show desktop</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="win-e">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">File Explorer</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Win</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">E</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Open File Explorer</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="win-l">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Lock PC</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Win</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">L</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Lock your computer</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="alt-tab">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Switch Apps</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Alt</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">Tab</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Switch between open applications</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="alt-f4">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Close Window</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Alt</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">F4</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Close active window</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="win-left">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Snap Left</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Win</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">←</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Snap window to left half of screen</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="win-right">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Snap Right</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Win</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">→</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Snap window to right half of screen</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="win-up">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Maximize</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Win</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">↑</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Maximize active window</p>
+                    </div>
+
+                    <div class="shortcut-card" data-keys="win-down">
+                        <div class="shortcut-header">
+                            <span class="shortcut-title">Minimize</span>
+                            <div class="keyboard-visual">
+                                <div class="key-visual combo">
+                                    <span class="key-part">Win</span>
+                                    <span class="plus">+</span>
+                                    <span class="key-part">↓</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="shortcut-description">Minimize active window</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button (Mobile) -->
+    <button class="fab" id="fabBtn">
+        <span class="fab-icon">🎙️</span>
+    </button>
+
+    <script src="/script.js"></script>
 </body>
-<script src="/script.js"></script>
 </html>
